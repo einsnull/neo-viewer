@@ -1,5 +1,5 @@
 // Make use of the CMake build system or compile manually, e.g. with:
-// g++ -std=c++11 viewer.cc -lsweep -lsfml-graphics -lsfml-window -lsfml-system
+// g++ -std=c++11 viewer.cc -lneo -lsfml-graphics -lsfml-window -lsfml-system
 
 #include <cmath>
 
@@ -8,7 +8,7 @@
 #include <mutex>
 #include <utility>
 
-#include <sweep/sweep.hpp>
+#include <neo/neo.hpp>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -23,6 +23,8 @@ static const sf::Color kColorCream{250, 240, 230};
 static const sf::Color kColorDenim{80, 102, 127};
 static const sf::Color kColorBlack{0, 0, 0};
 static const sf::Color kColorWhite{255, 255, 255};
+static const sf::Color kColorSlateBlue{106, 90, 205};
+
 
 // One circle per angle / distance measurement
 using PointCloud = std::vector<sf::CircleShape>;
@@ -62,7 +64,7 @@ int main(int argc, char* argv[]) try {
             window->close();
       }
 
-      window->clear(kColorWhite);
+      window->clear(kColorSlateBlue);
 
       {
         std::lock_guard<PointCloudMutex> sentry{pointCloudMutex};
@@ -80,72 +82,74 @@ int main(int argc, char* argv[]) try {
   thread.launch();
 
   // Now start scanning in the second thread, swapping in new points for every scan
-  sweep::sweep device{argv[1]};
-  device.set_motor_speed(5);
-  device.start_scanning();
+/*
+ *  neo::neo device{argv[1]};
+ *  device.set_motor_speed(5);
+ *  device.start_scanning();
+ *
+ *  neo::scan scan;
+ *
+ *  while (window.isOpen()) {
+ *    scan = device.get_scan();
+ *
+ *    // 40m max radius => display as 80m x 80m square
+ *    const auto windowSize = window.getSize();
+ *    const auto windowMinSize = std::min(windowSize.x, windowSize.y);
+ *
+ *    PointCloud localPointCloud;
+ *
+ *    for (auto sample : scan.samples) {
+ *      const constexpr auto kDegreeToRadian = 0.017453292519943295;
+ *
+ *      const auto distance = static_cast<double>(sample.distance);
+ *
+ *      // Discard samples above our we zoomed-in view box
+ *      if (distance > kMaxLaserDistance)
+ *        continue;
+ *
+ *      // From milli degree to degree and adjust to device orientation
+ *      const auto degree = std::fmod((static_cast<double>(sample.angle) / 1000. + 90.), 360.);
+ *      const auto radian = degree * kDegreeToRadian;
+ *
+ *      // From angle / distance to to Cartesian
+ *      auto x = std::cos(radian) * distance;
+ *      auto y = std::sin(radian) * distance;
+ *
+ *      // Make positive
+ *      x = x + kMaxLaserDistance;
+ *      y = y + kMaxLaserDistance;
+ *
+ *      // Scale to window size
+ *      x = (x / (2 * kMaxLaserDistance)) * windowMinSize;
+ *      y = (y / (2 * kMaxLaserDistance)) * windowMinSize;
+ *
+ *      sf::CircleShape point{3.0f, 20};
+ *      point.setPosition(x, windowMinSize - y);
+ *
+ *      // Base transparency on signal strength
+ *      auto color = kColorRed;
+ *      color.a = sample.signal_strength;
+ *      point.setFillColor(sf::Color::White);
+ *
+ *      localPointCloud.push_back(std::move(point));
+ *    }
+ *
+ *    // display LiDAR position
+ *    sf::CircleShape point{3.0f, 8};
+ *    point.setPosition(windowSize.x / 2, windowSize.y / 2);
+ *    point.setFillColor(kColorRed);
+ *    localPointCloud.push_back(std::move(point));
+ *
+ *    {
+ *      // Now swap in the new point cloud
+ *      std::lock_guard<PointCloudMutex> sentry{pointCloudMutex};
+ *      pointCloud = std::move(localPointCloud);
+ *    }
+ *  }
+ *
+ *  device.stop_scanning();
+ */
 
-  sweep::scan scan;
-
-  while (window.isOpen()) {
-    scan = device.get_scan();
-
-    // 40m max radius => display as 80m x 80m square
-    const auto windowSize = window.getSize();
-    const auto windowMinSize = std::min(windowSize.x, windowSize.y);
-
-    PointCloud localPointCloud;
-
-    for (auto sample : scan.samples) {
-      const constexpr auto kDegreeToRadian = 0.017453292519943295;
-
-      const auto distance = static_cast<double>(sample.distance);
-
-      // Discard samples above our we zoomed-in view box
-      if (distance > kMaxLaserDistance)
-        continue;
-
-      // From milli degree to degree and adjust to device orientation
-      const auto degree = std::fmod((static_cast<double>(sample.angle) / 1000. + 90.), 360.);
-      const auto radian = degree * kDegreeToRadian;
-
-      // From angle / distance to to Cartesian
-      auto x = std::cos(radian) * distance;
-      auto y = std::sin(radian) * distance;
-
-      // Make positive
-      x = x + kMaxLaserDistance;
-      y = y + kMaxLaserDistance;
-
-      // Scale to window size
-      x = (x / (2 * kMaxLaserDistance)) * windowMinSize;
-      y = (y / (2 * kMaxLaserDistance)) * windowMinSize;
-
-      sf::CircleShape point{3.0f, 20};
-      point.setPosition(x, windowMinSize - y);
-
-      // Base transparency on signal strength
-      auto color = kColorRed;
-      color.a = sample.signal_strength;
-      point.setFillColor(sf::Color::Red);
-
-      localPointCloud.push_back(std::move(point));
-    }
-
-    // display LiDAR position
-    sf::CircleShape point{3.0f, 8};
-    point.setPosition(windowSize.x / 2, windowSize.y / 2);
-    point.setFillColor(kColorBlack);
-    localPointCloud.push_back(std::move(point));
-
-    {
-      // Now swap in the new point cloud
-      std::lock_guard<PointCloudMutex> sentry{pointCloudMutex};
-      pointCloud = std::move(localPointCloud);
-    }
-  }
-
-  device.stop_scanning();
-
-} catch (const sweep::device_error& e) {
+} catch (const neo::device_error& e) {
   std::cerr << "Error: " << e.what() << std::endl;
 }

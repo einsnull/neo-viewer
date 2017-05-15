@@ -17,7 +17,7 @@ else()
 endif()
 
 find_package(Threads REQUIRED)
-find_package(Sweep REQUIRED)
+find_package(Neo REQUIRED)
 
 
 
@@ -27,8 +27,8 @@ pkg_check_modules(LIBSFML sfml-all)
 
 if (LIBSFML_FOUND)
   add_executable(neo_viewer src/viewer.cpp)
-  target_link_libraries(neo_viewer PRIVATE ${LIBSWEEP_LIBRARY} ${LIBSFML_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
-  target_include_directories(neo_viewer SYSTEM PRIVATE ${LIBSWEEP_INCLUDE_DIR} ${LIBSFML_INCLUDE_DIRS})
+  target_link_libraries(neo_viewer PRIVATE ${LIBNEO_LIBRARY} ${LIBSFML_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+  target_include_directories(neo_viewer SYSTEM PRIVATE ${LIBNEO_INCLUDE_DIR} ${LIBSFML_INCLUDE_DIRS})
 else()
   message(STATUS "SFML2 required for real-time viewer (libsfml-dev)")
 endif()
