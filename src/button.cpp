@@ -5,15 +5,7 @@ namespace neo
     Button::Button(const std::string& filename,
                    const float position_x,
                    const float position_y) {
-
-        load(filename);
-        button_sprite_.setTexture(button_texture_);
-        button_sprite_.setPosition(position_x, position_y);
-
-        x_min_ = position_x;
-        y_min_ = position_y;
-        x_max_ = x_min_ + 27;
-        y_max_ = x_max_ + 27;
+        set(filename, position_x, position_y);
     }
 
     Button::~Button() {}
@@ -26,6 +18,19 @@ namespace neo
 
     void Button::draw(sf::RenderWindow* windows) {
         windows->draw(button_sprite_);
+    }
+
+    void Button::set(const std::string& filename,
+                     const float position_x,
+                     const float position_y) {
+        load(filename);
+        button_sprite_.setTexture(button_texture_);
+        button_sprite_.setPosition(position_x, position_y);
+
+        x_min_ = position_x;
+        y_min_ = position_y;
+        x_max_ = x_min_ + 27;
+        y_max_ = x_max_ + 27;
     }
 
     bool Button::inRange(float x, float y) {

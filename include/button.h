@@ -34,6 +34,8 @@ namespace neo
 
         bool inRange(float a, float b);
 
+        void set(const std::string& filename, const float position_x, const float position_y);
+
 		sf::Texture button_texture_;
         sf::Sprite button_sprite_;
 

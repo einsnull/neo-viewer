@@ -187,8 +187,8 @@ void AngleCircles::processEvents() {
                 processWheel(true);
             break;
 
-        // case sf::Event::MouseButtonPressed:
-        //     processMouseButton(true); break;
+        case sf::Event::MouseButtonPressed:
+            processMouseButton(true); break;
 
         case sf::Event::MouseButtonReleased:
             processMouseButton(false); break;
@@ -238,26 +238,61 @@ void AngleCircles::processMouseButton(bool isPressed) {
     float mouse_x = sf::Mouse::getPosition(windows_).x,
         mouse_y = sf::Mouse::getPosition(windows_).y;
 
-    if (start_.inRange(mouse_x, mouse_y) &&
-        (status_ == neo::Status::NOT_RUN || status_ == neo::Status::PAUSE)) {
-        status_ = neo::Status::RUNNING;
-        button_status_ = neo::ButtonStatus::BUTTON_START;
-        // std::cout << "start status" << button_status_ << std::endl;
-    } else if (pause_.inRange(mouse_x, mouse_y) && status_ == neo::Status::RUNNING) {
-        status_ = neo::Status::PAUSE;
-        button_status_ = neo::ButtonStatus::BUTTON_PAUSE;
-        // std::cout << "pause status" << button_status_ << std::endl;
-    } else if (stop_.inRange(mouse_x, mouse_y) &&
-               (status_ == neo::Status::RUNNING || status_ == neo::Status::PAUSE)) {
-        status_ = neo::Status::NOT_RUN;
-        button_status_ = neo::ButtonStatus::BUTTON_STOP;
-        // std::cout << "stop status" << button_status_ << std::endl;
-    } else if (help_.inRange(mouse_x, mouse_y)) {
-        button_status_ = neo::ButtonStatus::BUTTON_HELP;
-        // std::cout << "help Status" << button_status_ << std::endl;
+    // for define where did we press the button
+    static bool range_start = false,
+        range_pause = false,
+        range_stop = false,
+        range_help = false;
+
+    if (isPressed) {
+        if (start_.inRange(mouse_x, mouse_y)) {
+            start_.set("../images/start_20.png", 10, 10);
+            range_start = true;
+        } else if (pause_.inRange(mouse_x, mouse_y)) {
+            pause_.set("../images/pause_20.png", 41, 10);
+            range_pause = true;
+        } else if (stop_.inRange(mouse_x, mouse_y)) {
+            stop_.set("../images/stop_20.png", 72, 10);
+            range_stop = true;
+        } else if (help_.inRange(mouse_x, mouse_y)) {
+            help_.set("../images/help_20.png", 112, 10);
+            range_help = true;
+        }
     } else {
-        button_status_ = neo::ButtonStatus::BUTTON_NONE;
-        // std::cout << "else status" << button_status_ << std::endl;
+
+        if (range_start) {
+            start_.set("../images/start_28.png", 6, 6);
+            range_start = false;
+            if (status_ == neo::Status::NOT_RUN || status_ == neo::Status::PAUSE) {
+                status_ = neo::Status::RUNNING;
+                button_status_ = neo::ButtonStatus::BUTTON_START;
+                // std::cout << "start status" << button_status_ << std::endl;
+            }
+        } else if (range_pause) {
+            pause_.set("../images/pause_28.png", 37, 6);
+            range_pause = false;
+            if( status_ == neo::Status::RUNNING) {
+                status_ = neo::Status::PAUSE;
+                button_status_ = neo::ButtonStatus::BUTTON_PAUSE;
+                // std::cout << "pause status" << button_status_ << std::endl;
+            }
+        } else if (range_stop){
+            stop_.set("../images/stop_28.png", 68, 6);
+            range_stop = false;
+            if (status_ == neo::Status::RUNNING || status_ == neo::Status::PAUSE) {
+                status_ = neo::Status::NOT_RUN;
+                button_status_ = neo::ButtonStatus::BUTTON_STOP;
+                // std::cout << "stop status" << button_status_ << std::endl;
+            }
+        } else if (range_help) {
+            button_status_ = neo::ButtonStatus::BUTTON_HELP;
+            help_.set("../images/help_28.png", 108, 6);
+            range_help = false;
+            // std::cout << "help Status" << button_status_ << std::endl;
+        } else {
+            button_status_ = neo::ButtonStatus::BUTTON_NONE;
+            // std::cout << "else status" << button_status_ << std::endl;
+        }
     }
 
 }
