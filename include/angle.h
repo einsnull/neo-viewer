@@ -8,28 +8,45 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
+#include <button.h>
+
 class AngleCircles {
 public:
     AngleCircles(int pixel, float distance);
     ~AngleCircles();
 
     void update(float distance);
-    const float getBigCircleRadius();          // return distance(cm)
-    const float getSmallCircleRadius();        // return distance(cm)
-    const float getDistance();
+    float getBigCircleRadius() const;          // return distance(cm)
+    float getSmallCircleRadius() const;        // return distance(cm)
+    float getDistance() const;
 
     void setCircleRadius(float distance);   // set var distance
 
     void processEvents();
 
+    // handle key input
     void handleInput(sf::Keyboard::Key key, bool isPressed);
+    // process key press event
     void processPress();
+    // process mouse wheel
+    void processWheel(bool flag);
+    // process mouse click event
+    void processMouseButton(bool flag);
+    // set button status
+    void setButtonStatus(neo::ButtonStatus status);
+    // get button status
+    neo::ButtonStatus getButtonStatus();
+    // get scanner status
+    neo::Status getStatus();
 
-    const void drawBigCircle();
-    const void drawSmallCircle();
-    const void draw();
-
-    const void showMarks();
+    // draw the outline big circle
+    void drawBigCircle();
+    // draw the small circle
+    void drawSmallCircle();
+    // the draw function
+    void draw();
+    // show the scale the windows
+    void showMarks();
 
 private:
     int big_circle_radius_pixel_;   // big circle radius in pixel;
@@ -61,18 +78,32 @@ private:
     sf::Font text_font_;
 
     bool zoom_in_, /* Down */ zoom_out_ /* Up */;
+
+    // for button
+    neo::Button start_, pause_, stop_, help_;
+
+    sf::RectangleShape outliers_start_; // start button outline
+    sf::RectangleShape outliers_pause_; // pause button outline
+    sf::RectangleShape outliers_stop_;  // stop button outline
+    sf::RectangleShape outliers_help_;  // help button outline
+    sf::RectangleShape outliers_left_;
+    sf::RectangleShape outliers_right_;
+
+    neo::Status status_;
+    neo::ButtonStatus button_status_;
 public:
     sf::RenderWindow windows_;
 };
 
+// class for vertical and horizontal line
 class AngleLines {
 public:
     AngleLines(int pixel);
     ~AngleLines();
 
-    const void drawVerticalLine(sf::RenderWindow* windows);
-    const void drawHorizontalLine(sf::RenderWindow* windows);
-    const void draw(sf::RenderWindow* windows);
+    void drawVerticalLine(sf::RenderWindow* windows);
+    void drawHorizontalLine(sf::RenderWindow* windows);
+    void draw(sf::RenderWindow* windows);
 
 private:
     int windows_size_;

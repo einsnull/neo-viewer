@@ -26,6 +26,7 @@ static const sf::Color kColorCream{250, 240, 230};
 static const sf::Color kColorDenim{80, 102, 127};
 static const sf::Color kColorBlack{0, 0, 0};
 static const sf::Color kColorWhite{255, 255, 255};
+// color for background
 static const sf::Color kColorSlateBlue{106, 90, 205};
 static const sf::Color kColorMidnightBlue{25, 25, 112};
 static const sf::Color kColorDarkSlateBlue{72, 61, 139};
@@ -64,7 +65,7 @@ int main(int argc, char* argv[]) try {
 	// Render thread displays the point cloud
 	AngleCircles circles(800, 16*100.);
 	AngleLines lines(800);
-    neo::Buttons button;
+    // neo::Buttons button;
 	const auto worker = [&](sf::RenderWindow* window) {
 		sf::Clock clock;
 		sf::Time time_since_last_update = sf::Time::Zero;
@@ -84,7 +85,7 @@ int main(int argc, char* argv[]) try {
 			while (time_since_last_update > TimePreFrame) {
 				time_since_last_update -= TimePreFrame;
 				circles.processEvents();
-				circles.processPress();
+				//circles.processPress();
 				window->clear(kColorSlateBlue4);
 				{
 					std::lock_guard<PointCloudMutex> sentry{pointCloudMutex};
@@ -92,7 +93,7 @@ int main(int argc, char* argv[]) try {
 					// window->draw(mPlayer);
 					circles.draw();
 					lines.draw(window);
-                    button.draw(window);
+                    // button.draw(window);
 					for (auto point : pointCloud)
 						window->draw(point);
 				}
@@ -109,12 +110,39 @@ int main(int argc, char* argv[]) try {
 
 	// Now start scanning in the second thread, swapping in new points for every scan
 	neo::neo device{argv[1]};
-	device.set_motor_speed(5);
-	device.start_scanning();
+	// device.set_motor_speed(5);
+	// device.start_scanning();
 
 	neo::scan scan;
+    std::cout << "Device connect successful" << std::endl;
 
 	while (circles.windows_.isOpen()) {
+        if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_START) {
+            static bool first_start = true;
+            // std::cout << "start running" << std::endl;
+            circles.setButtonStatus(neo::ButtonStatus::BUTTON_NONE);
+            if (first_start) {
+                device.set_motor_speed(5);
+                device.start_scanning();
+                first_start = false;
+            } else
+                device.start_scanning();
+        } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_PAUSE) {
+            // std::cout << "pause, and keep the pointcloud";
+            circles.setButtonStatus(neo::ButtonStatus::BUTTON_NOT_RUN);
+            continue;
+        } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_STOP) {
+            // std::cout << "stop and reset the scanner" << std::endl;
+            circles.setButtonStatus(neo::ButtonStatus::BUTTON_NOT_RUN);
+            continue;
+        } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_HELP) {
+            // std::cout << "Open the help window" << std::endl;
+            circles.setButtonStatus(neo::ButtonStatus::BUTTON_NONE);
+        } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_NOT_RUN) {
+            // std::cout << "Not_run" << std::endl;
+            continue;
+        }
+
 		scan = device.get_scan();
 		auto currentDistance = circles.getDistance();
         // std::cout << "currentDistance: " << currentDistance << std::endl;
