@@ -11,6 +11,7 @@
 #include <neo/neo.hpp>
 
 #include <angle.h>
+#include <button.h>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -26,6 +27,10 @@ static const sf::Color kColorDenim{80, 102, 127};
 static const sf::Color kColorBlack{0, 0, 0};
 static const sf::Color kColorWhite{255, 255, 255};
 static const sf::Color kColorSlateBlue{106, 90, 205};
+static const sf::Color kColorMidnightBlue{25, 25, 112};
+static const sf::Color kColorDarkSlateBlue{72, 61, 139};
+static const sf::Color kColorBlue4{0, 0, 255};
+static const sf::Color kColorSlateBlue4{15, 16, 64};
 
 // windows zoom in/out frequency
 const sf::Time TimePreFrame = sf::seconds(1.f/20.f);
@@ -59,6 +64,7 @@ int main(int argc, char* argv[]) try {
 	// Render thread displays the point cloud
 	AngleCircles circles(800, 16*100.);
 	AngleLines lines(800);
+    neo::Buttons button;
 	const auto worker = [&](sf::RenderWindow* window) {
 		sf::Clock clock;
 		sf::Time time_since_last_update = sf::Time::Zero;
@@ -79,13 +85,14 @@ int main(int argc, char* argv[]) try {
 				time_since_last_update -= TimePreFrame;
 				circles.processEvents();
 				circles.processPress();
-				window->clear(kColorSlateBlue);
+				window->clear(kColorSlateBlue4);
 				{
 					std::lock_guard<PointCloudMutex> sentry{pointCloudMutex};
 
 					// window->draw(mPlayer);
 					circles.draw();
 					lines.draw(window);
+                    button.draw(window);
 					for (auto point : pointCloud)
 						window->draw(point);
 				}
@@ -157,7 +164,7 @@ int main(int argc, char* argv[]) try {
 		// display LiDAR position
 		sf::CircleShape point{4.0f, 8};
 		point.setPosition(windowSize.x / 2-4, windowSize.y / 2-4);
-		point.setFillColor(kColorBlack);
+		point.setFillColor(sf::Color::Red);
 		localPointCloud.push_back(std::move(point));
 
 		{

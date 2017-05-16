@@ -40,9 +40,12 @@ private:
     float small_circle_radius_;     // small circle radius in meter;
     sf::CircleShape small_circle_;
 
+    int radius_;
+    sf::CircleShape small_circle_1_, big_circle_1_;
+
     int windows_size_;              // maximum distance in pixel
     float distance_;                // the maximum distance the windows can display.
-                                    // range: [5-50] meter
+                                    // range: [1-40] meter(there are the biggest circle's radius)
 
     // the text show on windows;
     sf::Text                     big_up_,

@@ -28,7 +28,7 @@ include(FindPkgConfig)
 pkg_check_modules(LIBSFML sfml-all)
 
 if (LIBSFML_FOUND)
-  add_executable(neo_viewer src/viewer.cpp src/angle.cpp)
+  add_executable(neo_viewer src/viewer.cpp src/angle.cpp src/button.cpp)
   target_link_libraries(neo_viewer PRIVATE ${LIBNEO_LIBRARY} ${LIBSFML_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
   target_include_directories(neo_viewer SYSTEM PRIVATE ${LIBNEO_INCLUDE_DIR} ${LIBSFML_INCLUDE_DIRS})
 else()

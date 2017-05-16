@@ -16,6 +16,8 @@ AngleCircles::AngleCircles(int pixel, float distance) :
 
     small_circle_radius_pixel_ = big_circle_radius_pixel_ / 2;
 
+    radius_ = small_circle_radius_pixel_ / 2;
+
     update(distance_);
 
     // big circle radius
@@ -27,7 +29,7 @@ AngleCircles::AngleCircles(int pixel, float distance) :
     // big circle fill color
     big_circle_.setFillColor(sf::Color::Transparent);
     // big circle outlier color
-    big_circle_.setOutlineColor(sf::Color::Red);
+    big_circle_.setOutlineColor(sf::Color::Green);
     // big circle outlier thickness
     big_circle_.setOutlineThickness(1.0f);
 
@@ -35,47 +37,70 @@ AngleCircles::AngleCircles(int pixel, float distance) :
     small_circle_.setPosition(50 + small_circle_radius_pixel_, 50 + small_circle_radius_pixel_);
     small_circle_.setPointCount(100);
     small_circle_.setFillColor(sf::Color::Transparent);
-    small_circle_.setOutlineColor(sf::Color::Red);
+    small_circle_.setOutlineColor(sf::Color::Green);
     small_circle_.setOutlineThickness(1.0f);
+
+    small_circle_1_.setRadius(radius_);
+    small_circle_1_.setPosition(50 + 3 * radius_, 50 + 3 * radius_);
+    small_circle_1_.setPointCount(100);
+    small_circle_1_.setFillColor(sf::Color::Transparent);
+    small_circle_1_.setOutlineColor(sf::Color::Green);
+    small_circle_1_.setOutlineThickness(1.0f);
+
+    big_circle_1_.setRadius(3 * radius_);
+    big_circle_1_.setPosition(50 + radius_, 50 + radius_);
+    big_circle_1_.setPointCount(100);
+    big_circle_1_.setFillColor(sf::Color::Transparent);
+    big_circle_1_.setOutlineColor(sf::Color::Green);
+    big_circle_1_.setOutlineThickness(1.0f);
 
     text_font_.loadFromFile("../fonts/Sansation.ttf");
     big_up_.setFont(text_font_);
     big_up_.setPosition(windows_size_/2 + 2 , 32);
     big_up_.setCharacterSize(12);
+    big_up_.setColor(sf::Color::Red);
 
     small_up_.setFont(text_font_);
     small_up_.setPosition(windows_size_/2 + 2, 32 + small_circle_radius_pixel_);
     small_up_.setCharacterSize(12);
+    small_up_.setColor(sf::Color::Red);
 
     big_left_.setFont(text_font_);
     big_left_.setPosition(55, windows_size_/2 - 18);
     big_left_.setCharacterSize(12);
+    big_left_.setColor(sf::Color::Red);
 
     small_left_.setFont(text_font_);
     small_left_.setPosition(windows_size_/2 - small_circle_radius_pixel_ + 2, windows_size_/2 - 18);
     small_left_.setCharacterSize(12);
+    small_left_.setColor(sf::Color::Red);
 
     center_.setFont(text_font_);
     center_.setPosition(windows_size_/2 + 5, windows_size_/2 - 18);
     center_.setCharacterSize(12);
+    center_.setColor(sf::Color::Red);
 
     small_right_.setFont(text_font_);
     small_right_.setPosition(windows_size_ / 2 + small_circle_radius_pixel_ + 5,
                             windows_size_/2 - 18);
     small_right_.setCharacterSize(12);
+    small_right_.setColor(sf::Color::Red);
 
     big_right_.setFont(text_font_);
     big_right_.setPosition(windows_size_ / 2 + big_circle_radius_pixel_ + 5,
                             windows_size_/2 - 18);
     big_right_.setCharacterSize(12);
+    big_right_.setColor(sf::Color::Red);
 
     small_bottom_.setFont(text_font_);
     small_bottom_.setPosition(windows_size_/2 + 2, windows_size_/2 + small_circle_radius_pixel_ - 18);
     small_bottom_.setCharacterSize(12);
+    small_bottom_.setColor(sf::Color::Red);
 
     big_bottom_.setFont(text_font_);
     big_bottom_.setPosition(windows_size_/2 + 2, windows_size_/2 + big_circle_radius_pixel_ - 18);
     big_bottom_.setCharacterSize(12);
+    big_bottom_.setColor(sf::Color::Red);
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
@@ -137,7 +162,7 @@ void AngleCircles::processPress() {
     if (zoom_out_ && big_circle_radius_ < 4000) {
         radius = big_circle_radius_ + 100;
         setCircleRadius(radius);
-    } else if (zoom_in_ && big_circle_radius_ > 500) {
+    } else if (zoom_in_ && big_circle_radius_ > 100) {
         radius = big_circle_radius_ - 100;
         setCircleRadius(radius);
     }
@@ -154,7 +179,9 @@ const void AngleCircles::drawSmallCircle() {
 
 const void AngleCircles::draw() {
     drawBigCircle();
+    windows_.draw(big_circle_1_);
     drawSmallCircle();
+    windows_.draw(small_circle_1_);
     showMarks();
 }
 
@@ -191,12 +218,12 @@ AngleLines::AngleLines(int pixel) : windows_size_(pixel) {
     vertical_line_.setSize(sf::Vector2f(windows_size_ - 50, 1));
     vertical_line_.setRotation(90);
     vertical_line_.setPosition(windows_size_/2, 25);
-    vertical_line_.setFillColor(sf::Color::Red);
+    vertical_line_.setFillColor(sf::Color::Green);
 
 
     horizontal_line_.setSize(sf::Vector2f(windows_size_ - 50, 1));
     horizontal_line_.setPosition(25, windows_size_/2);
-    horizontal_line_.setFillColor(sf::Color::Red);
+    horizontal_line_.setFillColor(sf::Color::Green);
 }
 
 AngleLines::~AngleLines() {}
