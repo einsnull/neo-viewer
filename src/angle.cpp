@@ -17,7 +17,9 @@ AngleCircles::AngleCircles(int pixel, float distance) :
     stop_("../images/stop_28.png",   68.f, 6.f),
     help_("../images/help_28.png",   108.f, 6.f),
     status_(neo::Status::NOT_RUN),
-    button_status_(neo::ButtonStatus::BUTTON_NOT_RUN) {
+    button_status_(neo::ButtonStatus::BUTTON_NOT_RUN),
+    help_message_("../images/logo.jpg", 100.f, 100.f),
+    show_help_(false) {
 
     big_circle_radius_pixel_ = windows_size_ / 2 - 50;
 
@@ -263,7 +265,8 @@ void AngleCircles::processMouseButton(bool isPressed) {
         if (range_start) {
             start_.set("../images/start_28.png", 6, 6);
             range_start = false;
-            if (status_ == neo::Status::NOT_RUN || status_ == neo::Status::PAUSE) {
+            if (status_ == neo::Status::STOP || status_ == neo::Status::PAUSE ||
+                status_ == neo::Status::NOT_RUN || status_ == neo::Status::HELP) {
                 status_ = neo::Status::RUNNING;
                 button_status_ = neo::ButtonStatus::BUTTON_START;
                 // std::cout << "start status" << button_status_ << std::endl;
@@ -279,15 +282,21 @@ void AngleCircles::processMouseButton(bool isPressed) {
         } else if (range_stop){
             stop_.set("../images/stop_28.png", 68, 6);
             range_stop = false;
-            if (status_ == neo::Status::RUNNING || status_ == neo::Status::PAUSE) {
-                status_ = neo::Status::NOT_RUN;
+            if (status_ == neo::Status::RUNNING ||
+                status_ == neo::Status::PAUSE ||
+                status_ == neo::Status::HELP) {
+                if (status_ == neo::Status::HELP && show_help_ == true)
+                    show_help_ = false;
+                status_ = neo::Status::STOP;
                 button_status_ = neo::ButtonStatus::BUTTON_STOP;
                 // std::cout << "stop status" << button_status_ << std::endl;
             }
         } else if (range_help) {
             button_status_ = neo::ButtonStatus::BUTTON_HELP;
+            status_ = neo::Status::HELP;
             help_.set("../images/help_28.png", 108, 6);
             range_help = false;
+            show_help_ = !show_help_;
             // std::cout << "help Status" << button_status_ << std::endl;
         } else {
             button_status_ = neo::ButtonStatus::BUTTON_NONE;
@@ -337,6 +346,9 @@ void AngleCircles::draw() {
     pause_.draw(&windows_);
     stop_.draw(&windows_);
     help_.draw(&windows_);
+
+    if (show_help_)
+        help_message_.draw(&windows_);
 }
 
 void AngleCircles::showMarks() {

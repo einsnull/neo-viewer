@@ -13,6 +13,7 @@ namespace neo
         RUNNING,
         PAUSE,
         STOP,
+        HELP,
     };
 
     enum ButtonStatus {

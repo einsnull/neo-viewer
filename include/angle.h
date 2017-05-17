@@ -91,6 +91,9 @@ private:
 
     neo::Status status_;
     neo::ButtonStatus button_status_;
+
+    neo::Button help_message_;
+    bool show_help_;
 public:
     sf::RenderWindow windows_;
 };

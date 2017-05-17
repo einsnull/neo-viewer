@@ -134,14 +134,20 @@ int main(int argc, char* argv[]) try {
         } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_STOP) {
             // std::cout << "stop and reset the scanner" << std::endl;
             circles.setButtonStatus(neo::ButtonStatus::BUTTON_NOT_RUN);
+            pointCloud.clear();
             continue;
         } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_HELP) {
             // std::cout << "Open the help window" << std::endl;
-            circles.setButtonStatus(neo::ButtonStatus::BUTTON_NONE);
+            circles.setButtonStatus(neo::ButtonStatus::BUTTON_NOT_RUN);
+            continue;
         } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_NOT_RUN) {
             // std::cout << "Not_run" << std::endl;
             continue;
         }
+
+        // difference between BUTTON_NOT_RUN and BUTTON_NONE
+        // BUTTON_NOT_RUN: the scanning stopped.
+        // BUTTON_NONE: the scanner running and send data.
 
 		scan = device.get_scan();
 		auto currentDistance = circles.getDistance();
