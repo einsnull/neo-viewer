@@ -10,6 +10,13 @@
 
 #include <button.h>
 
+template <typename T>
+std::string toString(const T& value) {
+    std::stringstream stream;
+    stream << value;
+    return stream.str();
+}
+
 namespace neo
 {
     class AngleCircles {
@@ -65,6 +72,9 @@ namespace neo
                             sf::Vector2f size = sf::Vector2f(30, 30),
                             sf::Color color = sf::Color::White);
 
+        int getMotorSpeed() const;
+        void setMotorSpeed(int speed);
+
     private:
         int big_circle_radius_pixel_;   // big circle radius in pixel;
         float big_circle_radius_;       // big circle radius in centimeter;
@@ -94,7 +104,7 @@ namespace neo
 
         sf::Font text_font_;
 
-        bool zoom_in_, /* Down */ zoom_out_ /* Up */;
+        bool speed_down_, /* Down */ speed_up_ /* Up */;
 
         // for button
         neo::Button start_, pause_, stop_, help_;
@@ -111,6 +121,8 @@ namespace neo
 
         neo::Button help_message_;
         bool show_help_;
+
+        int motor_speed_;
     public:
         sf::RenderWindow windows_;
     };

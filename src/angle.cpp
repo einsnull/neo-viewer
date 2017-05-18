@@ -1,17 +1,11 @@
 #include <angle.h>
 
-template <typename T>
-std::string toString(const T& value) {
-    std::stringstream stream;
-    stream << value;
-    return stream.str();
-}
 namespace neo {
     AngleCircles::AngleCircles(int pixel, float distance) :
         windows_size_(pixel),
         distance_(distance),
-        zoom_in_(false),
-        zoom_out_(false),
+        speed_down_(false),
+        speed_up_(false),
         start_("images/start_28.png",  6.f, 6.f),
         pause_("images/pause_28.png", 37.f, 6.f),
         stop_("images/stop_28.png",   68.f, 6.f),
@@ -19,7 +13,8 @@ namespace neo {
         status_(neo::Status::NOT_RUN),
         button_status_(neo::ButtonStatus::BUTTON_NOT_RUN),
         help_message_("images/logo.jpg", 100.f, 100.f),
-        show_help_(false) {
+        show_help_(false),
+        motor_speed_(5) {
 
         big_circle_radius_pixel_ = windows_size_ / 2 - 50;
 
@@ -171,19 +166,16 @@ namespace neo {
 
     void AngleCircles::handleInput(sf::Keyboard::Key key, bool isPressed) {
         if (key == sf::Keyboard::Up)
-            zoom_out_ = isPressed;
+            speed_up_ = isPressed;
         else if (key == sf::Keyboard::Down)
-            zoom_in_ = isPressed;
+            speed_down_ = isPressed;
     }
 
     void AngleCircles::processPress() {
-        float radius;
-        if (zoom_out_ && big_circle_radius_ < 4000) {
-            radius = big_circle_radius_ + 100;
-            setCircleRadius(radius);
-        } else if (zoom_in_ && big_circle_radius_ > 100) {
-            radius = big_circle_radius_ - 100;
-            setCircleRadius(radius);
+        if (speed_up_ && motor_speed_ < 10) {
+            setMotorSpeed(getMotorSpeed() + 1);
+        } else if (speed_down_ && motor_speed_ > 1) {
+            setMotorSpeed(getMotorSpeed() - 1);
         }
 
     }
@@ -380,6 +372,14 @@ namespace neo {
         button_outliers.setSize(size);
         button_outliers.setPosition(position_x, position_y);
         button_outliers.setFillColor(color);
+    }
+
+    int AngleCircles::getMotorSpeed() const {
+        return motor_speed_;
+    }
+
+    void AngleCircles::setMotorSpeed(int speed) {
+        motor_speed_ = speed;
     }
 
 
