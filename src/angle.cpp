@@ -299,7 +299,7 @@ void AngleCircles::processMouseButton(bool isPressed) {
             show_help_ = !show_help_;
             // std::cout << "help Status" << button_status_ << std::endl;
         } else {
-            button_status_ = neo::ButtonStatus::BUTTON_NONE;
+            // button_status_ = neo::ButtonStatus::BUTTON_NONE;
             // std::cout << "else status" << button_status_ << std::endl;
         }
     }
