@@ -12,13 +12,13 @@ AngleCircles::AngleCircles(int pixel, float distance) :
     distance_(distance),
     zoom_in_(false),
     zoom_out_(false),
-    start_("../images/start_28.png",  6.f, 6.f),
-    pause_("../images/pause_28.png", 37.f, 6.f),
-    stop_("../images/stop_28.png",   68.f, 6.f),
-    help_("../images/help_28.png",   108.f, 6.f),
+    start_("images/start_28.png",  6.f, 6.f),
+    pause_("images/pause_28.png", 37.f, 6.f),
+    stop_("images/stop_28.png",   68.f, 6.f),
+    help_("images/help_28.png",   108.f, 6.f),
     status_(neo::Status::NOT_RUN),
     button_status_(neo::ButtonStatus::BUTTON_NOT_RUN),
-    help_message_("../images/logo.jpg", 100.f, 100.f),
+    help_message_("images/logo.jpg", 100.f, 100.f),
     show_help_(false) {
 
     big_circle_radius_pixel_ = windows_size_ / 2 - 50;
@@ -63,7 +63,7 @@ AngleCircles::AngleCircles(int pixel, float distance) :
     big_circle_1_.setOutlineColor(sf::Color::Green);
     big_circle_1_.setOutlineThickness(1.0f);
 
-    text_font_.loadFromFile("../fonts/Sansation.ttf");
+    text_font_.loadFromFile("fonts/Sansation.ttf");
     big_up_.setFont(text_font_);
     big_up_.setPosition(windows_size_/2 + 2 , 32);
     big_up_.setCharacterSize(12);
@@ -248,22 +248,22 @@ void AngleCircles::processMouseButton(bool isPressed) {
 
     if (isPressed) {
         if (start_.inRange(mouse_x, mouse_y)) {
-            start_.set("../images/start_20.png", 10, 10);
+            start_.set("images/start_20.png", 10, 10);
             range_start = true;
         } else if (pause_.inRange(mouse_x, mouse_y)) {
-            pause_.set("../images/pause_20.png", 41, 10);
+            pause_.set("images/pause_20.png", 41, 10);
             range_pause = true;
         } else if (stop_.inRange(mouse_x, mouse_y)) {
-            stop_.set("../images/stop_20.png", 72, 10);
+            stop_.set("images/stop_20.png", 72, 10);
             range_stop = true;
         } else if (help_.inRange(mouse_x, mouse_y)) {
-            help_.set("../images/help_20.png", 112, 10);
+            help_.set("images/help_20.png", 112, 10);
             range_help = true;
         }
     } else {
 
         if (range_start) {
-            start_.set("../images/start_28.png", 6, 6);
+            start_.set("images/start_28.png", 6, 6);
             range_start = false;
             if (status_ == neo::Status::STOP || status_ == neo::Status::PAUSE ||
                 status_ == neo::Status::NOT_RUN || status_ == neo::Status::HELP) {
@@ -272,7 +272,7 @@ void AngleCircles::processMouseButton(bool isPressed) {
                 // std::cout << "start status" << button_status_ << std::endl;
             }
         } else if (range_pause) {
-            pause_.set("../images/pause_28.png", 37, 6);
+            pause_.set("images/pause_28.png", 37, 6);
             range_pause = false;
             if( status_ == neo::Status::RUNNING) {
                 status_ = neo::Status::PAUSE;
@@ -280,7 +280,7 @@ void AngleCircles::processMouseButton(bool isPressed) {
                 // std::cout << "pause status" << button_status_ << std::endl;
             }
         } else if (range_stop){
-            stop_.set("../images/stop_28.png", 68, 6);
+            stop_.set("images/stop_28.png", 68, 6);
             range_stop = false;
             if (status_ == neo::Status::RUNNING ||
                 status_ == neo::Status::PAUSE ||
@@ -294,7 +294,7 @@ void AngleCircles::processMouseButton(bool isPressed) {
         } else if (range_help) {
             button_status_ = neo::ButtonStatus::BUTTON_HELP;
             status_ = neo::Status::HELP;
-            help_.set("../images/help_28.png", 108, 6);
+            help_.set("images/help_28.png", 108, 6);
             range_help = false;
             show_help_ = !show_help_;
             // std::cout << "help Status" << button_status_ << std::endl;
