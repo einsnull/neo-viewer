@@ -1,6 +1,6 @@
 
 // build pointcloud when running
-void buildPointCloud(neo::scan& scan, AngleCircles& circles,
+void buildPointCloud(neo::scan& scan, neo::AngleCircles& circles,
                      PointCloudMutex &pointCloudMutex,
                      PointCloud &pointCloud) {
     auto currentDistance = circles.getDistance();
@@ -50,7 +50,7 @@ void buildPointCloud(neo::scan& scan, AngleCircles& circles,
 }
 
 // build pointcloud when pause, zoom in/out
-void buildPointCloudWhenPause(AngleCircles& circles,
+void buildPointCloudWhenPause(neo::AngleCircles& circles,
                               PointCloudMutex& pointCloudMutex,
                               PointCloud& pointCloud) {
     auto currentDistance = circles.getDistance();

@@ -27,9 +27,9 @@ struct radian_distance_pointcloud {
 using PointCloud = std::vector<struct radian_distance_pointcloud>;
 using PointCloudMutex = std::mutex;
 
-void buildPointCloud(neo::scan& scan, AngleCircles& circles,
+void buildPointCloud(neo::scan& scan, neo::AngleCircles& circles,
                      PointCloudMutex& pointCloudMutex, PointCloud& pointCloud);
-void buildPointCloudWhenPause(AngleCircles& circles,
+void buildPointCloudWhenPause(neo::AngleCircles& circles,
                               PointCloudMutex& pointCloudMutex,
                               PointCloud& pointCloud);
 

@@ -30,8 +30,8 @@ int main(int argc, char* argv[]) try {
 	PointCloudMutex pointCloudMutex;
 
 	// Render thread displays the point cloud
-	AngleCircles circles(800, 16*100.);
-	AngleLines lines(800);
+    neo::AngleCircles circles(800, 16*100.);
+    neo::AngleLines lines(800);
 
 	// Now start scanning in the second thread, swapping in new points for every scan
 	neo::neo device{argv[1]};
