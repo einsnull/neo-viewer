@@ -23,93 +23,61 @@ AngleCircles::AngleCircles(int pixel, float distance) :
 
     big_circle_radius_pixel_ = windows_size_ / 2 - 50;
 
-    small_circle_radius_pixel_ = big_circle_radius_pixel_ / 2;
+    radius_ = big_circle_radius_pixel_ / 4;
 
-    radius_ = small_circle_radius_pixel_ / 2;
 
     update(distance_);
 
-    // big circle radius
-    big_circle_.setRadius(big_circle_radius_pixel_);
-    // big circle position
-    big_circle_.setPosition(50, 50);
-    // big circle pointcloud number
-    big_circle_.setPointCount(200);
-    // big circle fill color
-    big_circle_.setFillColor(sf::Color::Transparent);
-    // big circle outlier color
-    big_circle_.setOutlineColor(sf::Color::Green);
-    // big circle outlier thickness
-    big_circle_.setOutlineThickness(1.0f);
+    setCircleProperty(big_circle_, big_circle_radius_pixel_,
+                      50.f, 50.f, 200,
+                      sf::Color::Transparent,
+                      sf::Color::Green,
+                      1.0f);
 
-    small_circle_.setRadius(small_circle_radius_pixel_);
-    small_circle_.setPosition(50 + small_circle_radius_pixel_, 50 + small_circle_radius_pixel_);
-    small_circle_.setPointCount(100);
-    small_circle_.setFillColor(sf::Color::Transparent);
-    small_circle_.setOutlineColor(sf::Color::Green);
-    small_circle_.setOutlineThickness(1.0f);
+    setCircleProperty(big_circle_1_, 3 * radius_,
+                      50.f + radius_, 50.f + radius_, 100,
+                      sf::Color::Transparent,
+                      sf::Color::Green,
+                      1.0f);
 
-    small_circle_1_.setRadius(radius_);
-    small_circle_1_.setPosition(50 + 3 * radius_, 50 + 3 * radius_);
-    small_circle_1_.setPointCount(100);
-    small_circle_1_.setFillColor(sf::Color::Transparent);
-    small_circle_1_.setOutlineColor(sf::Color::Green);
-    small_circle_1_.setOutlineThickness(1.0f);
+    setCircleProperty(small_circle_, 2 * radius_,
+                      50 + 2 * radius_, 50 + 2 * radius_,
+                      100,
+                      sf::Color::Transparent,
+                      sf::Color::Green,
+                      1.0f);
 
-    big_circle_1_.setRadius(3 * radius_);
-    big_circle_1_.setPosition(50 + radius_, 50 + radius_);
-    big_circle_1_.setPointCount(100);
-    big_circle_1_.setFillColor(sf::Color::Transparent);
-    big_circle_1_.setOutlineColor(sf::Color::Green);
-    big_circle_1_.setOutlineThickness(1.0f);
+    setCircleProperty(small_circle_1_, radius_,
+                      50 + 3 * radius_, 50 + 3 * radius_,
+                      100,
+                      sf::Color::Transparent,
+                      sf::Color::Green,
+                      1.0f);
 
     text_font_.loadFromFile("fonts/Sansation.ttf");
-    big_up_.setFont(text_font_);
-    big_up_.setPosition(windows_size_/2 + 2 , 32);
-    big_up_.setCharacterSize(12);
-    big_up_.setColor(sf::Color::Red);
-
-    small_up_.setFont(text_font_);
-    small_up_.setPosition(windows_size_/2 + 2, 32 + small_circle_radius_pixel_);
-    small_up_.setCharacterSize(12);
-    small_up_.setColor(sf::Color::Red);
-
-    big_left_.setFont(text_font_);
-    big_left_.setPosition(55, windows_size_/2 - 18);
-    big_left_.setCharacterSize(12);
-    big_left_.setColor(sf::Color::Red);
-
-    small_left_.setFont(text_font_);
-    small_left_.setPosition(windows_size_/2 - small_circle_radius_pixel_ + 2, windows_size_/2 - 18);
-    small_left_.setCharacterSize(12);
-    small_left_.setColor(sf::Color::Red);
-
-    center_.setFont(text_font_);
-    center_.setPosition(windows_size_/2 + 5, windows_size_/2 - 18);
-    center_.setCharacterSize(12);
-    center_.setColor(sf::Color::Red);
-
-    small_right_.setFont(text_font_);
-    small_right_.setPosition(windows_size_ / 2 + small_circle_radius_pixel_ + 5,
-                            windows_size_/2 - 18);
-    small_right_.setCharacterSize(12);
-    small_right_.setColor(sf::Color::Red);
-
-    big_right_.setFont(text_font_);
-    big_right_.setPosition(windows_size_ / 2 + big_circle_radius_pixel_ + 5,
-                            windows_size_/2 - 18);
-    big_right_.setCharacterSize(12);
-    big_right_.setColor(sf::Color::Red);
-
-    small_bottom_.setFont(text_font_);
-    small_bottom_.setPosition(windows_size_/2 + 2, windows_size_/2 + small_circle_radius_pixel_ - 18);
-    small_bottom_.setCharacterSize(12);
-    small_bottom_.setColor(sf::Color::Red);
-
-    big_bottom_.setFont(text_font_);
-    big_bottom_.setPosition(windows_size_/2 + 2, windows_size_/2 + big_circle_radius_pixel_ - 18);
-    big_bottom_.setCharacterSize(12);
-    big_bottom_.setColor(sf::Color::Red);
+    setTextProperty(big_up_,
+                    float(windows_size_/2 + 2), 32);
+    setTextProperty(small_up_,
+                    float(windows_size_/2 + 2), 32 + 2 * radius_);
+    setTextProperty(big_left_,
+                    55, float(windows_size_/2 - 18));
+    setTextProperty(small_left_,
+                    float(windows_size_/2 - 2 * radius_ + 2),
+                    float(windows_size_/2 - 18));
+    setTextProperty(center_,
+                    float(windows_size_/2 + 5), float(windows_size_/2 - 18));
+    setTextProperty(small_right_,
+                    float(windows_size_/2 + 2 * radius_ + 5),
+                    float(windows_size_/2 - 18));
+    setTextProperty(big_right_,
+                    float(windows_size_/2 + big_circle_radius_pixel_ + 5),
+                    float(windows_size_/2 - 18));
+    setTextProperty(small_bottom_,
+                    float(windows_size_/2 + 2),
+                    float(windows_size_/2 + 2 * radius_ - 18));
+    setTextProperty(big_bottom_,
+                    float(windows_size_/2 + 2),
+                    float(windows_size_/2 + big_circle_radius_pixel_ - 18));
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
@@ -117,50 +85,45 @@ AngleCircles::AngleCircles(int pixel, float distance) :
     windows_.setFramerateLimit(60);
     windows_.setActive(false);
 
-    // the windows about icon and outlier rectangle
-    outliers_start_.setSize(sf::Vector2f(30, 30));
-    outliers_start_.setPosition(5, 5);
-    outliers_start_.setFillColor(sf::Color::White);
+    // the windows icon and outlier rectangle
+    setButtonPreperty(outliers_start_,
+                      5.f, 5.f);
+    setButtonPreperty(outliers_pause_,
+                      36.f, 5.f);
+    setButtonPreperty(outliers_stop_,
+                      67.f, 5.f);
+    setButtonPreperty(outliers_help_,
+                      107.f, 5.f);
 
-    outliers_pause_.setSize(sf::Vector2f(30, 30));
-    outliers_pause_.setPosition(36, 5);
-    outliers_pause_.setFillColor(sf::Color::White);
-
-    outliers_stop_.setSize(sf::Vector2f(30, 30));
-    outliers_stop_.setPosition(67, 5);
-    outliers_stop_.setFillColor(sf::Color::White);
-
-    outliers_help_.setSize(sf::Vector2f(30, 30));
-    outliers_help_.setPosition(107, 5);
-    outliers_help_.setFillColor(sf::Color::White);
-
-    outliers_left_.setSize(sf::Vector2f(92, 30));
-    outliers_left_.setPosition(5, 5);
-    outliers_left_.setFillColor(sf::Color::Black);
+    setButtonPreperty(outliers_left_,
+                      5.f, 5.f,
+                      sf::Vector2f(92, 30),
+                      sf::Color::Black);
     outliers_left_.setOutlineThickness(5);
     outliers_left_.setOutlineColor(sf::Color::Black);
 
-    outliers_right_.setSize(sf::Vector2f(30, 30));
-    outliers_right_.setPosition(107, 5);
-    outliers_right_.setFillColor(sf::Color::Black);
+    setButtonPreperty(outliers_right_,
+                      107.f, 5.f,
+                      sf::Vector2f(30, 30),
+                      sf::Color::Black);
     outliers_right_.setOutlineThickness(5);
     outliers_right_.setOutlineColor(sf::Color::Black);
 }
+
 
 AngleCircles::~AngleCircles() {}
 
 void AngleCircles::update(float distance) {
     big_circle_radius_ = distance;
-    small_circle_radius_ = big_circle_radius_ / 2;
 }
 
 float AngleCircles::getBigCircleRadius() const {
     return big_circle_radius_;
 }
 
-float AngleCircles::getSmallCircleRadius() const {
-    return small_circle_radius_;
-}
+// float AngleCircles::getSmallCircleRadius() const {
+//     return small_circle_radius_;
+// }
 
 float AngleCircles::getDistance() const {
     return distance_;
@@ -310,11 +273,11 @@ void AngleCircles::setButtonStatus(neo::ButtonStatus status) {
     button_status_ = status;
 }
 
-neo::ButtonStatus AngleCircles::getButtonStatus() {
+neo::ButtonStatus AngleCircles::getButtonStatus() const {
     return button_status_;
 }
 
-neo::Status AngleCircles::getStatus() {
+neo::Status AngleCircles::getStatus() const {
     return status_;
 }
 
@@ -355,30 +318,70 @@ void AngleCircles::showMarks() {
     big_up_.setString(toString(big_circle_radius_/100));
     windows_.draw(big_up_);
 
-    small_up_.setString(toString(small_circle_radius_/100));
+    small_up_.setString(toString(big_circle_radius_/200));
     windows_.draw(small_up_);
 
     big_left_.setString(toString(big_circle_radius_/100));
     windows_.draw(big_left_);
 
-    small_left_.setString(toString(small_circle_radius_/100));
+    small_left_.setString(toString(big_circle_radius_/200));
     windows_.draw(small_left_);
 
     center_.setString("0 m");
     windows_.draw(center_);
 
-    small_right_.setString(toString(small_circle_radius_/100));
+    small_right_.setString(toString(big_circle_radius_/200));
     windows_.draw(small_right_);
 
     big_right_.setString(toString(big_circle_radius_/100));
     windows_.draw(big_right_);
 
-    small_bottom_.setString(toString(small_circle_radius_/100));
+    small_bottom_.setString(toString(big_circle_radius_/200));
     windows_.draw(small_bottom_);
 
     big_bottom_.setString(toString(big_circle_radius_/100));
     windows_.draw(big_bottom_);
 }
+
+void AngleCircles::setCircleProperty(sf::CircleShape& circle, int radius,
+                                     float position_x, float position_y,
+                                     int point_num,
+                                     sf::Color fillColor,
+                                     sf::Color outlineColor,
+                                     float thickness) {
+    // circle radius
+    circle.setRadius(radius);
+    // circle position
+    circle.setPosition(position_x, position_y);
+    // circle pointcloud number
+    circle.setPointCount(point_num);
+    // circle fill color
+    circle.setFillColor(fillColor);
+    // circle outlier color
+    circle.setOutlineColor(outlineColor);
+    // circle outlier thickness
+    circle.setOutlineThickness(thickness);
+}
+
+void AngleCircles::setTextProperty(sf::Text& text,
+                                   float position_x, float position_y,
+                                   int characterSize,
+                                   sf::Color characterColor) {
+    text.setFont(text_font_);
+    text.setPosition(position_x, position_y);
+    text.setCharacterSize(characterSize);
+    text.setColor(characterColor);
+}
+
+void AngleCircles::setButtonPreperty(sf::RectangleShape& button_outliers,
+                                     float position_x, float position_y,
+                                     sf::Vector2f size,
+                                     sf::Color color) {
+    button_outliers.setSize(size);
+    button_outliers.setPosition(position_x, position_y);
+    button_outliers.setFillColor(color);
+}
+
 
 AngleLines::AngleLines(int pixel) : windows_size_(pixel) {
     vertical_line_.setSize(sf::Vector2f(windows_size_ - 50, 1));
