@@ -396,15 +396,15 @@ AngleLines::~AngleLines() {}
 
 
 
-void AngleLines::drawVerticalLine(sf::RenderWindow* windows) {
-    windows->draw(vertical_line_);
+void AngleLines::drawVerticalLine(sf::RenderWindow& windows) {
+    windows.draw(vertical_line_);
 }
 
-void AngleLines::drawHorizontalLine(sf::RenderWindow* windows) {
-    windows->draw(horizontal_line_);
+void AngleLines::drawHorizontalLine(sf::RenderWindow& windows) {
+    windows.draw(horizontal_line_);
 }
 
-void AngleLines::draw(sf::RenderWindow* windows) {
+void AngleLines::draw(sf::RenderWindow& windows) {
     drawVerticalLine(windows);
     drawHorizontalLine(windows);
 }

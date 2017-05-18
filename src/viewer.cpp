@@ -22,9 +22,11 @@
 // init distance show on windows
 const constexpr auto initDistance = 16 * 100.;
 
-
 // windows zoom in/out frequency
 const sf::Time TimePreFrame = sf::seconds(1.f/20.f);
+
+// PI/180, for degree to radian
+const constexpr auto kDegreeToRadian = 0.017453292519943295;
 
 
 // One circle per angle / distance measurement
@@ -36,15 +38,14 @@ using PointCloud = std::vector<struct radian_distance_pointcloud>;
 using PointCloudMutex = std::mutex;
 
 // build pointcloud when running
-void buildPointCloud(neo::scan *scan, AngleCircles *circles, PointCloudMutex &pointCloudMutex, PointCloud &pointCloud) {
-    auto currentDistance = circles->getDistance();
-    const auto windowSize = circles->windows_.getSize();
+void buildPointCloud(neo::scan& scan, AngleCircles& circles, PointCloudMutex &pointCloudMutex, PointCloud &pointCloud) {
+    auto currentDistance = circles.getDistance();
+    const auto windowSize = circles.windows_.getSize();
     const auto windowMinSize = std::min(windowSize.x, windowSize.y);
-    const constexpr auto kDegreeToRadian = 0.017453292519943295;
 
     PointCloud localPointCloud;
 
-    for (auto sample : scan->samples) {
+    for (auto sample : scan.samples) {
         const auto distance = static_cast<double>(sample.distance);
 
         if (distance > currentDistance)
@@ -84,11 +85,10 @@ void buildPointCloud(neo::scan *scan, AngleCircles *circles, PointCloudMutex &po
 }
 
 // build pointcloud when pause, zoom in/out
-void buildPointCloudWhenPause(AngleCircles *circles, PointCloudMutex& pointCloudMutex, PointCloud& pointCloud) {
-    auto currentDistance = circles->getDistance();
-    const auto windowSize = circles->windows_.getSize();
+void buildPointCloudWhenPause(AngleCircles& circles, PointCloudMutex& pointCloudMutex, PointCloud& pointCloud) {
+    auto currentDistance = circles.getDistance();
+    const auto windowSize = circles.windows_.getSize();
     const auto windowMinSize = std::min(windowSize.x, windowSize.y);
-    const constexpr auto kDegreeToRadian = 0.017453292519943295;
 
     PointCloud localPointCloud;
 
@@ -135,33 +135,6 @@ int main(int argc, char* argv[]) try {
 	// Render thread displays the point cloud
 	AngleCircles circles(800, 16*100.);
 	AngleLines lines(800);
-	const auto worker = [&](sf::RenderWindow* window) {
-		sf::Clock clock;
-		sf::Time time_since_last_update = sf::Time::Zero;
-		while (window->isOpen()) {
-			sf::Time elapsed_time = clock.restart();
-			time_since_last_update += elapsed_time;
-
-			while (time_since_last_update > TimePreFrame) {
-				time_since_last_update -= TimePreFrame;
-				circles.processEvents();
-				window->clear(kColorSlateBlue4);
-				{
-					std::lock_guard<PointCloudMutex> sentry{pointCloudMutex};
-					circles.draw();
-					lines.draw(window);
-					for (auto point : pointCloud)
-						window->draw(point.point);
-				}
-				window->display();
-			}
-
-
-		}
-	};
-
-	sf::Thread thread(worker, &circles.windows_);
-	thread.launch();
 
 	// Now start scanning in the second thread, swapping in new points for every scan
 	neo::neo device{argv[1]};
@@ -169,7 +142,27 @@ int main(int argc, char* argv[]) try {
 	neo::scan scan;
     std::cout << "Device connect successful" << std::endl;
 
-	while (circles.windows_.isOpen()) {
+    sf::Clock clock;
+    sf::Time time_since_last_update = sf::Time::Zero;
+
+    while (circles.windows_.isOpen()) {
+        sf::Time elapsed_time = clock.restart();
+        time_since_last_update += elapsed_time;
+
+        // windows render frequency
+        while (time_since_last_update > TimePreFrame) {
+            time_since_last_update -= TimePreFrame;
+            circles.processEvents();
+            circles.windows_.clear(kColorSlateBlue4);
+            {
+                std::lock_guard<PointCloudMutex> sentry{pointCloudMutex};
+                circles.draw();
+                lines.draw(circles.windows_);
+                for (auto point : pointCloud)
+                    circles.windows_.draw(point.point);
+            }
+            circles.windows_.display();
+        }
         // deal with press button situation
         if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_START) {
             static bool first_start = true;
@@ -189,6 +182,7 @@ int main(int argc, char* argv[]) try {
             // std::cout << "stop and reset the scanner" << std::endl;
             circles.setButtonStatus(neo::ButtonStatus::BUTTON_NOT_RUN);
             pointCloud.clear();
+            device.stop_scanning();
             continue;
         } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_HELP) {
             // std::cout << "Open the help window" << std::endl;
@@ -196,7 +190,7 @@ int main(int argc, char* argv[]) try {
             continue;
         } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_NOT_RUN) {
             // std::cout << "Not_run" << std::endl;
-            buildPointCloudWhenPause(&circles, pointCloudMutex, pointCloud);
+            buildPointCloudWhenPause(circles, pointCloudMutex, pointCloud);
             continue;
         }
         // difference between BUTTON_NOT_RUN and BUTTON_NONE
@@ -204,9 +198,8 @@ int main(int argc, char* argv[]) try {
         // BUTTON_NONE: the scanner running and send data.
 
 		scan = device.get_scan();
-        buildPointCloud(&scan, &circles, pointCloudMutex, pointCloud);
-	}
-
+        buildPointCloud(scan, circles, pointCloudMutex, pointCloud);
+    }
 	device.stop_scanning();
 
 } catch (const neo::device_error& e) {

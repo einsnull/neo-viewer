@@ -104,9 +104,9 @@ public:
     AngleLines(int pixel);
     ~AngleLines();
 
-    void drawVerticalLine(sf::RenderWindow* windows);
-    void drawHorizontalLine(sf::RenderWindow* windows);
-    void draw(sf::RenderWindow* windows);
+    void drawVerticalLine(sf::RenderWindow& windows);
+    void drawHorizontalLine(sf::RenderWindow& windows);
+    void draw(sf::RenderWindow& windows);
 
 private:
     int windows_size_;
