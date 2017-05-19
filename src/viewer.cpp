@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) try {
         if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_START) { // START running
             if (circles.getStatus() != neo::Status::RUNNING) {
                 circles.setStatus(neo::Status::RUNNING);
-                device.set_motor_speed(currentSpeed);
+                device.set_motor_speed(circles.getMotorSpeed());
                 device.start_scanning();
             } else {
                 if (currentSpeed != circles.getMotorSpeed()) {
