@@ -9,7 +9,6 @@
 namespace neo
 {
     enum Status {
-        NOT_RUN,
         RUNNING,
         PAUSE,
         STOP,
@@ -17,12 +16,10 @@ namespace neo
     };
 
     enum ButtonStatus {
-        BUTTON_NOT_RUN, // status: not run or stop or pause
         BUTTON_START,
         BUTTON_PAUSE,
         BUTTON_STOP,
         BUTTON_HELP,
-        BUTTON_NONE,    // status for running, but status cannot be others.
     };
 	class Button
 	{

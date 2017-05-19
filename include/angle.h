@@ -45,6 +45,8 @@ namespace neo
         void setButtonStatus(neo::ButtonStatus status);
         // get button status
         neo::ButtonStatus getButtonStatus() const;
+        // set scanner status
+        void setStatus(neo::Status status);
         // get scanner status
         neo::Status getStatus() const;
 

@@ -10,8 +10,8 @@ namespace neo {
         pause_("images/pause_28.png", 37.f, 6.f),
         stop_("images/stop_28.png",   68.f, 6.f),
         help_("images/help_28.png",   108.f, 6.f),
-        status_(neo::Status::NOT_RUN),
-        button_status_(neo::ButtonStatus::BUTTON_NOT_RUN),
+        status_(neo::Status::STOP),
+        button_status_(neo::ButtonStatus::BUTTON_STOP),
         help_message_("images/logo.jpg", 100.f, 100.f),
         show_help_(false),
         motor_speed_(5) {
@@ -221,8 +221,8 @@ namespace neo {
                 start_.set("images/start_28.png", 6, 6);
                 range_start = false;
                 if (status_ == neo::Status::STOP || status_ == neo::Status::PAUSE ||
-                    status_ == neo::Status::NOT_RUN || status_ == neo::Status::HELP) {
-                    status_ = neo::Status::RUNNING;
+                    status_ == neo::Status::HELP) {
+                    // status_ = neo::Status::RUNNING;
                     button_status_ = neo::ButtonStatus::BUTTON_START;
                     // std::cout << "start status" << button_status_ << std::endl;
                 }
@@ -230,7 +230,7 @@ namespace neo {
                 pause_.set("images/pause_28.png", 37, 6);
                 range_pause = false;
                 if( status_ == neo::Status::RUNNING) {
-                    status_ = neo::Status::PAUSE;
+                    // status_ = neo::Status::PAUSE;
                     button_status_ = neo::ButtonStatus::BUTTON_PAUSE;
                     // std::cout << "pause status" << button_status_ << std::endl;
                 }
@@ -242,13 +242,13 @@ namespace neo {
                     status_ == neo::Status::HELP) {
                     if (status_ == neo::Status::HELP && show_help_ == true)
                         show_help_ = false;
-                    status_ = neo::Status::STOP;
+                    // status_ = neo::Status::STOP;
                     button_status_ = neo::ButtonStatus::BUTTON_STOP;
                     // std::cout << "stop status" << button_status_ << std::endl;
                 }
             } else if (range_help) {
                 button_status_ = neo::ButtonStatus::BUTTON_HELP;
-                status_ = neo::Status::HELP;
+                // status_ = neo::Status::HELP;
                 help_.set("images/help_28.png", 108, 6);
                 range_help = false;
                 show_help_ = !show_help_;
@@ -267,6 +267,10 @@ namespace neo {
 
     neo::ButtonStatus AngleCircles::getButtonStatus() const {
         return button_status_;
+    }
+
+    void AngleCircles::setStatus(neo::Status status) {
+        status_ = status;
     }
 
     neo::Status AngleCircles::getStatus() const {

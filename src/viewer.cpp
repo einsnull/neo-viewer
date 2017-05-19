@@ -51,6 +51,7 @@ int main(int argc, char* argv[]) try {
 
     sf::Clock clock;
     sf::Time time_since_last_update = sf::Time::Zero;
+    int currentSpeed = circles.getMotorSpeed();
 
     while (circles.windows_.isOpen()) {
         sf::Time elapsed_time = clock.restart();
@@ -73,44 +74,49 @@ int main(int argc, char* argv[]) try {
             circles.windows_.display();
         }
         // deal with press button situation
-        if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_START) {
-            static bool first_start = true;
-            // std::cout << "start running" << std::endl;
-            circles.setButtonStatus(neo::ButtonStatus::BUTTON_NONE);
-            if (first_start) {
-                device.set_motor_speed(circles.getMotorSpeed());
-                // device.set_motor_speed(5);
+        if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_START) { // START running
+            if (circles.getStatus() != neo::Status::RUNNING) {
+                circles.setStatus(neo::Status::RUNNING);
+                device.set_motor_speed(currentSpeed);
                 device.start_scanning();
-                first_start = false;
-            } else
-                device.start_scanning();
-        } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_PAUSE) {
+            } else {
+                if (currentSpeed != circles.getMotorSpeed()) {
+                    currentSpeed = circles.getMotorSpeed();
+                    device.stop_scanning();
+                    device.set_motor_speed(currentSpeed);
+                    device.start_scanning();
+                }
+            }
+        } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_PAUSE) {  // PAUSE
+            buildPointCloudWhenPause(circles, pointCloudMutex, pointCloud);
+            if (circles.getStatus() == neo::Status::PAUSE) continue;
+            circles.setStatus(neo::Status::PAUSE);
+            device.stop_scanning();
+            device.set_motor_speed(0);
             // std::cout << "pause, and keep the pointcloud";
-            circles.setButtonStatus(neo::ButtonStatus::BUTTON_NOT_RUN);
             continue;
-        } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_STOP) {
+        } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_STOP) {  // STOP
             // std::cout << "stop and reset the scanner" << std::endl;
-            circles.setButtonStatus(neo::ButtonStatus::BUTTON_NOT_RUN);
+            if (circles.getStatus() == neo::Status::STOP) continue;
+            circles.setStatus(neo::Status::STOP);
             pointCloud.clear();
             device.stop_scanning();
+            device.set_motor_speed(0);
             continue;
-        } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_HELP) {
+        } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_HELP) {  // HELP
+            if (circles.getStatus() == neo::Status::HELP) continue;
+            circles.setStatus(neo::Status::HELP);
+            device.stop_scanning();
+            device.set_motor_speed(0);
             // std::cout << "Open the help window" << std::endl;
-            circles.setButtonStatus(neo::ButtonStatus::BUTTON_NOT_RUN);
-            continue;
-        } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_NOT_RUN) {
-            // std::cout << "Not_run" << std::endl;
-            buildPointCloudWhenPause(circles, pointCloudMutex, pointCloud);
             continue;
         }
-        // difference between BUTTON_NOT_RUN and BUTTON_NONE
-        // BUTTON_NOT_RUN: the scanning stopped.
-        // BUTTON_NONE: the scanner running and send data.
 
 		scan = device.get_scan();
         buildPointCloud(scan, circles, pointCloudMutex, pointCloud);
     }
 	device.stop_scanning();
+    device.set_motor_speed(0);
 
 } catch (const neo::device_error& e) {
 	std::cerr << "Error: " << e.what() << std::endl;
