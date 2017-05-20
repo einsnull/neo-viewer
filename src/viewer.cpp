@@ -1,6 +1,3 @@
-// Make use of the CMake build system or compile manually, e.g. with:
-// g++ -std=c++11 viewer.cc -lneo -lsfml-graphics -lsfml-window -lsfml-system
-
 #include <cmath>
 
 #include <cstdlib>
@@ -102,6 +99,7 @@ int main(int argc, char* argv[]) try {
             pointCloud.clear();
             device.stop_scanning();
             device.set_motor_speed(0);
+            circles.setMotorSpeed(5);
             continue;
         } else if (circles.getButtonStatus() == neo::ButtonStatus::BUTTON_HELP) {  // HELP
             if (circles.getStatus() == neo::Status::HELP) continue;

@@ -19,6 +19,15 @@ std::string toString(const T& value) {
 
 namespace neo
 {
+    enum ButtonRange {
+        RANGE_NONE,                // NONE: do not click mouse or click somewhere invalid area
+        RANGE_START,               // START: click on START button
+        RANGE_PAUSE,               // PAUSE: click on PAUSE button
+        RANGE_STOP,                // STOP: click on STOP button
+        RANGE_HELP,                // HELP: click on HELP button
+        RANGE_UP,                  // UP: click on UP button
+        RANGE_DOWN,                // DOWN: click on DOWN button
+    };
     class AngleCircles {
     public:
         AngleCircles(int pixel, float distance);
@@ -110,6 +119,10 @@ namespace neo
 
         // for button
         neo::Button start_, pause_, stop_, help_;
+        neo::Button up_, down_; // motor speed up/down
+
+        // define where did we click the mouse
+        ButtonRange button_range_;
 
         sf::RectangleShape outliers_start_; // start button outline
         sf::RectangleShape outliers_pause_; // pause button outline

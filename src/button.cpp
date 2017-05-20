@@ -30,7 +30,7 @@ namespace neo
         x_min_ = position_x;
         y_min_ = position_y;
         x_max_ = x_min_ + 27;
-        y_max_ = x_max_ + 27;
+        y_max_ = y_min_ + 27;
     }
 
     bool Button::inRange(float x, float y) {

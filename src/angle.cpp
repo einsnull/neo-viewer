@@ -10,6 +10,9 @@ namespace neo {
         pause_("images/pause_28.png", 37.f, 6.f),
         stop_("images/stop_28.png",   68.f, 6.f),
         help_("images/help_28.png",   108.f, 6.f),
+        up_("images/up_28.png", 767.f, 6.f),
+        down_("images/down_28.png", 767.f, 34.f),
+        button_range_(neo::ButtonRange::RANGE_NONE),
         status_(neo::Status::STOP),
         button_status_(neo::ButtonStatus::BUTTON_STOP),
         help_message_("images/logo.jpg", 100.f, 100.f),
@@ -195,48 +198,49 @@ namespace neo {
         float mouse_x = sf::Mouse::getPosition(windows_).x,
             mouse_y = sf::Mouse::getPosition(windows_).y;
 
-        // for define where did we press the button
-        static bool range_start = false,
-            range_pause = false,
-            range_stop = false,
-            range_help = false;
-
         if (isPressed) {
             if (start_.inRange(mouse_x, mouse_y)) {
                 start_.set("images/start_20.png", 10, 10);
-                range_start = true;
+                button_range_ = neo::ButtonRange::RANGE_START;
             } else if (pause_.inRange(mouse_x, mouse_y)) {
                 pause_.set("images/pause_20.png", 41, 10);
-                range_pause = true;
+                button_range_ = neo::ButtonRange::RANGE_PAUSE;
             } else if (stop_.inRange(mouse_x, mouse_y)) {
                 stop_.set("images/stop_20.png", 72, 10);
-                range_stop = true;
+                button_range_ = neo::ButtonRange::RANGE_STOP;
             } else if (help_.inRange(mouse_x, mouse_y)) {
                 help_.set("images/help_20.png", 112, 10);
-                range_help = true;
+                button_range_ = neo::ButtonRange::RANGE_HELP;
+            } else if (up_.inRange(mouse_x, mouse_y)) {
+                up_.set("images/up_20.png", 771, 10);
+                button_range_ = neo::ButtonRange::RANGE_UP;
+            } else if (down_.inRange(mouse_x, mouse_y)) {
+                std::cout << "range down" << std::endl;
+                down_.set("images/down_20.png", 771, 38);
+                button_range_ = neo::ButtonRange::RANGE_DOWN;
             }
         } else {
 
-            if (range_start) {
+            if (neo::ButtonRange::RANGE_START == button_range_) {
                 start_.set("images/start_28.png", 6, 6);
-                range_start = false;
+                button_range_ = neo::ButtonRange::RANGE_NONE;
                 if (status_ == neo::Status::STOP || status_ == neo::Status::PAUSE ||
                     status_ == neo::Status::HELP) {
                     // status_ = neo::Status::RUNNING;
                     button_status_ = neo::ButtonStatus::BUTTON_START;
                     // std::cout << "start status" << button_status_ << std::endl;
                 }
-            } else if (range_pause) {
+            } else if (neo::ButtonRange::RANGE_PAUSE == button_range_) {
                 pause_.set("images/pause_28.png", 37, 6);
-                range_pause = false;
+                button_range_ = neo::ButtonRange::RANGE_NONE;
                 if( status_ == neo::Status::RUNNING) {
                     // status_ = neo::Status::PAUSE;
                     button_status_ = neo::ButtonStatus::BUTTON_PAUSE;
                     // std::cout << "pause status" << button_status_ << std::endl;
                 }
-            } else if (range_stop){
+            } else if (neo::ButtonRange::RANGE_STOP == button_range_){
                 stop_.set("images/stop_28.png", 68, 6);
-                range_stop = false;
+                button_range_ = neo::ButtonRange::RANGE_NONE;
                 if (status_ == neo::Status::RUNNING ||
                     status_ == neo::Status::PAUSE ||
                     status_ == neo::Status::HELP) {
@@ -246,16 +250,23 @@ namespace neo {
                     button_status_ = neo::ButtonStatus::BUTTON_STOP;
                     // std::cout << "stop status" << button_status_ << std::endl;
                 }
-            } else if (range_help) {
+            } else if (neo::ButtonRange::RANGE_HELP == button_range_) {
                 button_status_ = neo::ButtonStatus::BUTTON_HELP;
                 // status_ = neo::Status::HELP;
                 help_.set("images/help_28.png", 108, 6);
-                range_help = false;
+                button_range_ = neo::ButtonRange::RANGE_NONE;
                 show_help_ = !show_help_;
                 // std::cout << "help Status" << button_status_ << std::endl;
-            } else {
-                // button_status_ = neo::ButtonStatus::BUTTON_NONE;
-                // std::cout << "else status" << button_status_ << std::endl;
+            } else if (neo::ButtonRange::RANGE_UP == button_range_) {
+                up_.set("images/up_28.png", 767, 6);
+                button_range_ = neo::ButtonRange::RANGE_NONE;
+                if (motor_speed_ < 10)
+                    setMotorSpeed(getMotorSpeed() + 1);
+            } else if (neo::ButtonRange::RANGE_DOWN == button_range_) {
+                down_.set("images/down_28.png", 767, 34);
+                button_range_ = neo::ButtonRange::RANGE_NONE;
+                if (motor_speed_ > 1)
+                    setMotorSpeed(getMotorSpeed() - 1);
             }
         }
 
@@ -305,6 +316,8 @@ namespace neo {
         pause_.draw(&windows_);
         stop_.draw(&windows_);
         help_.draw(&windows_);
+        up_.draw(&windows_);
+        down_.draw(&windows_);
 
         if (show_help_)
             help_message_.draw(&windows_);
