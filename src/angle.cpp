@@ -215,7 +215,6 @@ namespace neo {
                 up_.set("images/up_20.png", 771, 10);
                 button_range_ = neo::ButtonRange::RANGE_UP;
             } else if (down_.inRange(mouse_x, mouse_y)) {
-                std::cout << "range down" << std::endl;
                 down_.set("images/down_20.png", 771, 38);
                 button_range_ = neo::ButtonRange::RANGE_DOWN;
             }
