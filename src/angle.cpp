@@ -17,6 +17,7 @@ namespace neo {
         button_status_(neo::ButtonStatus::BUTTON_STOP),
         help_message_("images/logo.jpg", 100.f, 100.f),
         show_help_(false),
+        logo_image_("images/logo_small.jpg", 745.f, 754.f),
         motor_speed_(5) {
 
         big_circle_radius_pixel_ = windows_size_ / 2 - 50;
@@ -76,6 +77,7 @@ namespace neo {
         setTextProperty(big_bottom_,
                         float(windows_size_/2 + 2),
                         float(windows_size_/2 + big_circle_radius_pixel_ - 18));
+        setTextProperty(motor_speed_show_, 600.f, 27.f, 18, sf::Color::Green);
 
         sf::ContextSettings settings;
         settings.antialiasingLevel = 8;
@@ -320,6 +322,8 @@ namespace neo {
 
         if (show_help_)
             help_message_.draw(&windows_);
+
+        logo_image_.draw(&windows_);
     }
 
     void AngleCircles::showMarks() {
@@ -349,6 +353,9 @@ namespace neo {
 
         big_bottom_.setString(toString(big_circle_radius_/100));
         windows_.draw(big_bottom_);
+
+        motor_speed_show_.setString("Motor Speed(1-10): " + toString(motor_speed_));
+        windows_.draw(motor_speed_show_);
     }
 
     void AngleCircles::setCircleProperty(sf::CircleShape& circle, int radius,

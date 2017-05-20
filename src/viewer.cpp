@@ -26,19 +26,10 @@ int main(int argc, char* argv[]) try {
 	PointCloud pointCloud;
 	PointCloudMutex pointCloudMutex;
 
-    // motor shows
-    sf::Font motor_font;
-    motor_font.loadFromFile("fonts/Sansation.ttf");
-    sf::Text motor_text;
-    motor_text.setFont(motor_font);
-    motor_text.setPosition(650, 5);
-    motor_text.setCharacterSize(14);
-    motor_text.setColor(sf::Color::Green);
 
 	// Render thread displays the point cloud
     neo::AngleCircles circles(800, 16*100.);
     neo::AngleLines lines(800);
-    motor_text.setString("Motor Speed: " + toString(circles.getMotorSpeed()));
 
 	// Now start scanning in the second thread, swapping in new points for every scan
 	neo::neo device{argv[1]};
@@ -54,7 +45,6 @@ int main(int argc, char* argv[]) try {
         sf::Time elapsed_time = clock.restart();
         time_since_last_update += elapsed_time;
 
-        motor_text.setString("Motor Speed: " + toString(circles.getMotorSpeed()));
         // windows render frequency
         while (time_since_last_update > TimePreFrame) {
             time_since_last_update -= TimePreFrame;
@@ -64,7 +54,6 @@ int main(int argc, char* argv[]) try {
                 std::lock_guard<PointCloudMutex> sentry{pointCloudMutex};
                 circles.draw();
                 lines.draw(circles.windows_);
-                circles.windows_.draw(motor_text);
                 for (auto point : pointCloud)
                     circles.windows_.draw(point.point);
             }

@@ -112,6 +112,7 @@ namespace neo
                                 small_bottom_,
 
                                 big_bottom_;
+        sf::Text motor_speed_show_;
 
         sf::Font text_font_;
 
@@ -136,6 +137,8 @@ namespace neo
 
         neo::Button help_message_;
         bool show_help_;
+
+        neo::Button logo_image_;
 
         int motor_speed_;
     public:
