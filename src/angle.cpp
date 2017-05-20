@@ -76,7 +76,7 @@ namespace neo {
 
         sf::ContextSettings settings;
         settings.antialiasingLevel = 8;
-        windows_.create(sf::VideoMode(pixel, pixel), "Micvision Neo LiDAR demo", sf::Style::Default, settings);
+        windows_.create(sf::VideoMode(pixel, pixel), "Micvision Neo LiDAR demo", sf::Style::Close, settings);
         windows_.setFramerateLimit(60);
         windows_.setActive(false);
 
