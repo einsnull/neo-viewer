@@ -9,15 +9,15 @@ This repo make a demo to show neo lidar.
     `Ubuntu 16.04, gcc 5.4.0`
 # INSTALL
 1. Dependency
-   * [CMake](www.cmake.org)
+   * [CMake](http://www.cmake.org)
      - Windows: download and install cmake
      - Linux: ```sudo apt-get install cmake-gui```
-   * [SFML 2](www.sfml-dev.org)
+   * [SFML 2](http://www.sfml-dev.org)
      - Windows:
        + download a precompiled version of SFML and place wherever you want(like: F:\micvision\SFML-2.4.2)
        + adding SFML to system environment variable PATH: `F:\micvision\SFML-2.4.2`, `F:\micvision\SFML-2.4.2\bin`
      - Linux: ```sudo apt-get install libsfml-dev```
-   * [neo-sdk](www.github.com/micvision/neo-sdk.git)
+   * [neo-sdk](http://www.github.com/micvision/neo-sdk)
      - See the readme file to install it.
      - Windows: Adding neo to environment PATH: `C:\Program Files\neo`, `C:\Program Files\neo\lib`
      ![example](images/example.png)
@@ -53,4 +53,5 @@ You should change the serial port to the right one on your computer.
 2. Windows
 make a shortcut on desktop, and change the property like below:
 ![shortcut](images/shortcut.png)
+
 you should change the `COM8` to the right serial port on your computer. And click the shortcut to run the program.
