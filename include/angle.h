@@ -8,75 +8,161 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
-class AngleCircles {
-public:
-    AngleCircles(int pixel, float distance);
-    ~AngleCircles();
+#include <button.h>
 
-    void update(float distance);
-    const float getBigCircleRadius();          // return distance(cm)
-    const float getSmallCircleRadius();        // return distance(cm)
-    const float getDistance();
+template <typename T>
+std::string toString(const T& value) {
+    std::stringstream stream;
+    stream << value;
+    return stream.str();
+}
 
-    void setCircleRadius(float distance);   // set var distance
+namespace neo
+{
+    enum ButtonRange {
+        RANGE_NONE,                // NONE: do not click mouse or click somewhere invalid area
+        RANGE_START,               // START: click on START button
+        RANGE_PAUSE,               // PAUSE: click on PAUSE button
+        RANGE_STOP,                // STOP: click on STOP button
+        RANGE_HELP,                // HELP: click on HELP button
+        RANGE_UP,                  // UP: click on UP button
+        RANGE_DOWN,                // DOWN: click on DOWN button
+    };
+    class AngleCircles {
+    public:
+        AngleCircles(int pixel, float distance);
+        ~AngleCircles();
 
-    void processEvents();
+        void update(float distance);
+        float getBigCircleRadius() const;          // return distance(cm)
+        // float getSmallCircleRadius() const;        // return distance(cm)
+        float getDistance() const;
 
-    void handleInput(sf::Keyboard::Key key, bool isPressed);
-    void processPress();
+        void setCircleRadius(float distance);   // set var distance
 
-    const void drawBigCircle();
-    const void drawSmallCircle();
-    const void draw();
+        void processEvents();
 
-    const void showMarks();
+        // handle key input
+        void handleInput(sf::Keyboard::Key key, bool isPressed);
+        // process key press event
+        void processPress();
+        // process mouse wheel
+        void processWheel(bool flag);
+        // process mouse click event
+        void processMouseButton(bool flag);
+        // set button status
+        void setButtonStatus(neo::ButtonStatus status);
+        // get button status
+        neo::ButtonStatus getButtonStatus() const;
+        // set scanner status
+        void setStatus(neo::Status status);
+        // get scanner status
+        neo::Status getStatus() const;
 
-private:
-    int big_circle_radius_pixel_;   // big circle radius in pixel;
-    float big_circle_radius_;       // big circle radius in centimeter;
-    sf::CircleShape big_circle_;
+        // draw the outline big circle
+        void drawBigCircle();
+        // draw the small circle
+        void drawSmallCircle();
+        // the draw function
+        void draw();
+        // show the scale the windows
+        void showMarks();
 
-    int small_circle_radius_pixel_; // small circle radius in pixel;
-    float small_circle_radius_;     // small circle radius in meter;
-    sf::CircleShape small_circle_;
+        void setCircleProperty(sf::CircleShape& circles, int radius,
+                            float position_x, float position_y,
+                            int point_num,
+                            sf::Color fillColor, sf::Color outlineColor,
+                            float thickness);
 
-    int windows_size_;              // maximum distance in pixel
-    float distance_;                // the maximum distance the windows can display.
-                                    // range: [5-50] meter
+        void setTextProperty(sf::Text& text,
+                            float position_x, float position_y,
+                            int characterSize = 12, sf::Color characterColor = sf::Color::Red);
 
-    // the text show on windows;
-    sf::Text                     big_up_,
+        void setButtonPreperty(sf::RectangleShape& button_outliers,
+                            float position_x, float position_y,
+                            sf::Vector2f size = sf::Vector2f(30, 30),
+                            sf::Color color = sf::Color::White);
 
-                                small_up_,
+        int getMotorSpeed() const;
+        void setMotorSpeed(int speed);
 
-        big_left_, small_left_, center_, small_right_, big_right_,
+    private:
+        int big_circle_radius_pixel_;   // big circle radius in pixel;
+        float big_circle_radius_;       // big circle radius in centimeter;
+        sf::CircleShape big_circle_;
 
-                              small_bottom_,
+        // int small_circle_radius_pixel_; // small circle radius in pixel;
+        // float small_circle_radius_;     // small circle radius in meter;
+        sf::CircleShape small_circle_;
 
-                               big_bottom_;
+        int radius_;
+        sf::CircleShape small_circle_1_, big_circle_1_;
 
-    sf::Font text_font_;
+        int windows_size_;              // maximum distance in pixel
+        float distance_;                // the maximum distance the windows can display.
+                                        // range: [1-40] meter(there are the biggest circle's radius)
 
-    bool zoom_in_, /* Down */ zoom_out_ /* Up */;
-public:
-    sf::RenderWindow windows_;
-};
+        // the text show on windows;
+        sf::Text                     big_up_,
 
-class AngleLines {
-public:
-    AngleLines(int pixel);
-    ~AngleLines();
+                                    small_up_,
 
-    const void drawVerticalLine(sf::RenderWindow* windows);
-    const void drawHorizontalLine(sf::RenderWindow* windows);
-    const void draw(sf::RenderWindow* windows);
+            big_left_, small_left_, center_, small_right_, big_right_,
 
-private:
-    int windows_size_;
-    // line vertical
-    sf::RectangleShape vertical_line_;
-    // line horizontal
-    sf::RectangleShape horizontal_line_;
-};
+                                small_bottom_,
+
+                                big_bottom_;
+        sf::Text motor_speed_show_;
+
+        sf::Font text_font_;
+
+        bool speed_down_, /* Down */ speed_up_ /* Up */;
+
+        // for button
+        neo::Button start_, pause_, stop_, help_;
+        neo::Button up_, down_; // motor speed up/down
+
+        // define where did we click the mouse
+        ButtonRange button_range_;
+
+        sf::RectangleShape outliers_start_; // start button outline
+        sf::RectangleShape outliers_pause_; // pause button outline
+        sf::RectangleShape outliers_stop_;  // stop button outline
+        sf::RectangleShape outliers_help_;  // help button outline
+        sf::RectangleShape outliers_left_;
+        sf::RectangleShape outliers_right_;
+
+        neo::Status status_;
+        neo::ButtonStatus button_status_;
+
+        neo::Button help_message_;
+        bool show_help_;
+
+        neo::Button logo_image_;
+
+        int motor_speed_;
+    public:
+        sf::RenderWindow windows_;
+    };
+
+    // class for vertical and horizontal line
+    class AngleLines {
+    public:
+        AngleLines(int pixel);
+        ~AngleLines();
+
+        void drawVerticalLine(sf::RenderWindow& windows);
+        void drawHorizontalLine(sf::RenderWindow& windows);
+        void draw(sf::RenderWindow& windows);
+
+    private:
+        int windows_size_;
+        // line vertical
+        sf::RectangleShape vertical_line_;
+        // line horizontal
+        sf::RectangleShape horizontal_line_;
+    };
+
+}
 
 #endif // _ANGLE_H_
